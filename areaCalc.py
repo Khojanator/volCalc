@@ -4,7 +4,7 @@
 # Dated: 03/01/2019
 # Desc: A program to calculate area of a convex polygon bounded by points in a catesian plane
 
-from math import atan, sqrt, pi
+from math import atan, sqrt, pi, inf
 
 def calcArea(coordList):
 	posArea = negArea = 0
@@ -47,7 +47,11 @@ def polarizePoints(pList):
 
 def getAngle(coord):
 	"""Returns the angle formed by vector from Origin to the point in the plane with the positive horizontal axis"""
-	value = atan(coord[1]/coord[0])
+	try:
+		slope = coord[1]/coord[0]
+	except ZeroDivisionError:
+		slope = inf
+	value = atan(slope)
 	adjustedForQuad = value+pi if coord[0] < 0 else value
 	return adjustedForQuad
 
@@ -56,6 +60,14 @@ def sortCCWPoints(polarPList, pList):
 	zippedPolarCoords = zip(polarPList, pList)
 	sortedPolar, sortedReal = list(zip(*sorted(zippedPolarCoords)))
 	return sortedPolar, sortedReal
+
+def getPlaneArea(plane):
+	if plane:
+		CCWplane = createCCWList(plane)
+		planarArea = calcArea(CCWplane)
+	else:
+		planarArea = 0	
+	return planarArea
 
 if __name__ == '__main__':
 	A = [(1,0),(1,1),(0,1),(0,0)]
